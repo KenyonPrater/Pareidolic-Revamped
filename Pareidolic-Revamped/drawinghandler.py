@@ -28,6 +28,15 @@ class Drawing():
                     weight = brush[i,j]/255.
                     weighted_color = (color[0], color[1], color[2], int(color[3]*weight))
                     self._data[x,y] = blendRGBA(weighted_color, self._data[x,y])
+    def applyBrush(self,pos,color,brush):
+        for i in range(0, brush.shape[0]):
+            for j in range(0, brush.shape[0]):
+                x = pos[0] + (i - int(brush.shape[0]/2))
+                y = pos[1] + (j - int(brush.shape[0]/2))
+                if x >= 0 and x < self._width and y >= 0 and y < self._height:
+                    weight = brush[i,j]/255.
+                    weighted_color = (color[0], color[1], color[2], int(color[3]*weight))
+                    self._data[x,y] = blendRGBA(weighted_color, self._data[x,y])
 
 def blendRGBA(rgba_new, rgba_base):
     if (rgba_new[3] == 0 and rgba_base[3] == 0): #handle an ugly divide by 0 err
@@ -54,7 +63,8 @@ def generateBrush(radius, hardness):
 
 if __name__ == '__main__':
     dr = Drawing()
-    dr.applyBrush((100,128), (255,0,0,255),(100),.5)
-    dr.applyBrush((256-100,128), (0,255,0,255),(100),.5)
+    brush = generateBrush(100,.75)
+    dr.applyBrush((100,128), (255,0,0,255),brush)
+    dr.applyBrush((256-100,128), (0,255,0,255),brush)
     im = dr.toImage()
     im.save('asdf.png', "PNG")
