@@ -9,6 +9,16 @@ class Bezier():
                         dimenison 2 is the coordinates in different dimensions for each point.
         """
         self._points = points
+        self._maxT = 1.0
+
+    def toArr(self, n):
+        """
+        Returns a numpy array of length n containing n evenly spaced calls to sample
+        """
+        arr = np.zeros((n, self._points.shape[1]))
+        for i in range(n):
+            arr[i] = self.sample(i*self._maxT/(n-1))
+        return arr
 
     def sample(self, t):
         """For a given t in [0,1], find the coordinates of the Bezier curve at that t"""
@@ -29,7 +39,7 @@ class ControlPoint():
     def makeBezier(self, next):
         return Bezier(np.array((self._center, self._handle2, next._handle1, next._center)))
 
-class CompositeBezier():
+class CompositeBezier(Bezier):
     def __init__(self, control_points):
         self._control_points = control_points
         self._beziers = []
@@ -39,9 +49,7 @@ class CompositeBezier():
         self._beziers = []
         for i in range(len(self._control_points)-1):
             self._beziers += [self._control_points[i].makeBezier(self._control_points[i+1])]
-
-    def getMaxT(self):
-        return len(self._control_points) - 1
+        self._maxT = len(self._beziers)
 
     def sample(self, t):
         choice = int(t-1) if t==self.getMaxT() else int(t)
@@ -55,5 +63,4 @@ def lerp(a, b, t):
 if __name__ == '__main__':
     a = [ControlPoint((0,0), (0,1)), ControlPoint((1,1),(1,0)),ControlPoint((.5,.5),(0,0))]
     b = CompositeBezier(a)
-    for i in range(21):
-        print(b.sample(i/10.))
+    print(b.toArr(20))
