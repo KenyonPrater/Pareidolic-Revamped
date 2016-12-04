@@ -38,11 +38,10 @@ class Bezier(Path):
                         dimenison 2 is the coordinates in different dimensions for each point.
         """
         super().__init__()
-        self._points = points
+        self._points = np.array(points, dtype='float64')
 
     def addPoint(self, point, index=-1):
         self._points = np.insert(self._points, index, point, axis=0)
-        print(self._points)
 
     def getDimension(self):
         """
