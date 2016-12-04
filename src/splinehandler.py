@@ -40,6 +40,10 @@ class Bezier(Path):
         super().__init__()
         self._points = points
 
+    def addPoint(self, point, index=-1):
+        self._points = np.insert(self._points, index, point, axis=0)
+        print(self._points)
+
     def getDimension(self):
         """
         Returns the length of the vector returned by a call to Path.sample()
@@ -87,5 +91,6 @@ def lerp(a, b, t):
     return b*t + a*(1-t)
 
 if __name__ == '__main__':
-    a = Bezier(np.array([[0,0],[0,1],[1,1],[1,0]]))
+    a = Bezier(np.array([[0,0],[1,0]]))
+    a.addPoint([.5,1], 1)
     print(a.toArr(20))
