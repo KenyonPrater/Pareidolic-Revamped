@@ -1,6 +1,35 @@
+
 import numpy as np
 
-class Bezier():
+class Path():
+    """A thing that defines a path"""
+    def __init__(self):
+        pass
+
+    def sample(self, t):
+        """
+        Returns the value of the Path at t in [0,1]
+        """
+        return np.array([0])
+
+    def getDimension(self):
+        """
+        Returns the length of the vector returned by a call to Path.sample()
+        """
+        return 0
+
+    def toArr(self, n):
+        """
+        Returns a numpy array of n values of the Path evenly spaced from 0 to 1
+        """
+        a = np.arange(n)
+        vals = a / (n-1)
+        arr = np.zeros((n,self.getDimension()))
+        for i in range(n):
+            arr[i] = self.sample(vals[i])
+        return arr
+
+class Bezier(Path):
     """A bezier curve in arbitrary dimensions"""
     def __init__(self, points):
         """
@@ -8,17 +37,14 @@ class Bezier():
         @param points - a 2d numpy array. dimension 1 is seperate points,
                         dimenison 2 is the coordinates in different dimensions for each point.
         """
+        super().__init__()
         self._points = points
-        self._maxT = 1.0
 
-    def toArr(self, n):
+    def getDimension(self):
         """
-        Returns a numpy array of length n containing n evenly spaced calls to sample
+        Returns the length of the vector returned by a call to Path.sample()
         """
-        arr = np.zeros((n, self._points.shape[1]))
-        for i in range(n):
-            arr[i] = self.sample(i*self._maxT/(n-1))
-        return arr
+        return self._points.shape[1]
 
     def sample(self, t):
         """For a given t in [0,1], find the coordinates of the Bezier curve at that t"""
@@ -61,6 +87,5 @@ def lerp(a, b, t):
     return b*t + a*(1-t)
 
 if __name__ == '__main__':
-    a = [ControlPoint((0,0), (0,1)), ControlPoint((1,1),(1,0)),ControlPoint((.5,.5),(0,0))]
-    b = CompositeBezier(a)
-    print(b.toArr(20))
+    a = Bezier(np.array([[0,0],[0,1],[1,1],[1,0]]))
+    print(a.toArr(20))
