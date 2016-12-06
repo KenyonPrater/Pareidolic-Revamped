@@ -19,8 +19,11 @@ class Point():
     def __str__(self):
         return "Point: " + str(self._arr)
 
+    def __mul__(self, number):
+        return Point(self._arr*number)
+
     def __truediv__(self, number):
-        return Point(self._arr/2)
+        return Point(self._arr/number)
 
 class DrawingPoint(Point):
     def __init__(self, pos, color, size, hardness):
