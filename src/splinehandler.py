@@ -25,6 +25,10 @@ class Point():
     def __truediv__(self, number):
         return Point(self._arr/number)
 
+    def lerp(self, other, t):
+        assert t >= 0 and t <= 1
+        return self*(1-t) + other * t
+
 class DrawingPoint(Point):
     def __init__(self, pos, color, size, hardness):
         self._arr = np.array(pos + color + (size,) + (hardness,), dtype='float64')
@@ -95,5 +99,5 @@ class DrawingPoint(Point):
 if __name__ == '__main__':
     a = DrawingPoint((1,2), (255, 0, 0, 0), 10, .75)
     b = DrawingPoint((4,3), (0, 0, 255, 0), 10, .75)
-    print(a)
-    print((a+b)/2)
+    for i in [0, .25, .5, .75, 1]:
+        print(a.lerp(b, i))
