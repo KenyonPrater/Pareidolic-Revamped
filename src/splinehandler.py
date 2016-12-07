@@ -14,10 +14,7 @@ class Point():
         return Point(self._arr + other._arr)
 
     def __sub__(self, other):
-        return Point(self._arr - other._arr)
-
-    def __str__(self):
-        return "Point: " + str(self._arr)
+        return Point(self._arr - other._arrapplyBrush)
 
     def __mul__(self, number):
         return Point(self._arr*number)
@@ -25,13 +22,18 @@ class Point():
     def __truediv__(self, number):
         return Point(self._arr/number)
 
+    def __str__(self):
+        return "Point: " + str(self._arr)
+
     def lerp(self, other, t):
         assert t >= 0 and t <= 1
         return self*(1-t) + other * t
 
 class DrawingPoint(Point):
-    def __init__(self, pos, color, size, hardness):
-        self._arr = np.array(pos + color + (size,) + (hardness,), dtype='float64')
+
+    @classmethod
+    def fromColors(Class, pos, color, size, hardness):
+        Class(pos + color + (size,) + (hardness,))
 
     def draw(self, drawing):
         drawing.applyBrush(self.getPos(), self.getColor(), self.getSize(), self.getHardness())
@@ -96,18 +98,49 @@ class DrawingPoint(Point):
     def getHardness(self):
         return self._arr[7]
 
+    def __add__(self, other):
+        return DrawingPoint(self._arr + other._arr)
+
+    def __sub__(self, other):
+        return DrawingPoint(self._arr - other._arrapplyBrush)
+
+    def __mul__(self, number):
+        return DrawingPoint(self._arr*number)
+
+    def __truediv__(self, number):
+        return DrawingPoint(self._arr/number)
+
     def __str__(self):
         return "DrawingPoint(x:{}, y:{}, rgba:{}, size:{}, hardness:{})".format(self.getX(), self.getY(), self.getColor(), self.getSize(), self.getHardness())
 
-class Bezier():
+class Path():
+    def __init__(self):
+        pass
+
+    def sample(self, t):
+        pass
+
+class Bezier(Path):
     def __init__(self, points):
         self._points = points
 
     def sample(self, t):
+        a = self._points
+        while len(a) > 1:
+            new_a = []
+            for i in range(len(a)-1):
+                new_a += [a[i].lerp(a[i+1], t)]
+            a = new_a
+        return a[0]
+
+
 
 
 if __name__ == '__main__':
-    a = DrawingPoint((1,2), (255, 0, 0, 0), 10, .75)
-    b = DrawingPoint((4,3), (0, 0, 255, 0), 10, .75)
-    for i in [0, .25, .5, .75, 1]:
-        print(a.lerp(b, i))
+    a = DrawingPoint.fromColors((0,0), (255, 0, 0, 0), 10, .75)
+    b = DrawingPoint.fromColors((0,1), (0, 255, 0, 0), 10, .75)
+    c = DrawingPoint.fromColors((1,1), (0, 0, 255, 0), 10, .75)
+    d = DrawingPoint.fromColors((1,0), (0, 0, 0, 255), 10, .75)
+    e = Bezier([a,b,c,d])
+    for i in range(10):
+        print(e.sample(i/10))
