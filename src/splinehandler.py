@@ -33,6 +33,9 @@ class DrawingPoint(Point):
     def __init__(self, pos, color, size, hardness):
         self._arr = np.array(pos + color + (size,) + (hardness,), dtype='float64')
 
+    def draw(self, drawing):
+        drawing.applyBrush(self.getPos(), self.getColor(), self.getSize(), self.getHardness())
+
     def setX(self, x):
         self._arr[0] = x
 
@@ -95,6 +98,13 @@ class DrawingPoint(Point):
 
     def __str__(self):
         return "DrawingPoint(x:{}, y:{}, rgba:{}, size:{}, hardness:{})".format(self.getX(), self.getY(), self.getColor(), self.getSize(), self.getHardness())
+
+class Bezier():
+    def __init__(self, points):
+        self._points = points
+
+    def sample(self, t):
+
 
 if __name__ == '__main__':
     a = DrawingPoint((1,2), (255, 0, 0, 0), 10, .75)
