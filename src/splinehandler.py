@@ -33,7 +33,7 @@ class DrawingPoint(Point):
 
     @classmethod
     def fromColors(Class, pos, color, size, hardness):
-        Class(pos + color + (size,) + (hardness,))
+        return Class(pos + color + (size,) + (hardness,))
 
     def draw(self, drawing):
         drawing.applyBrush(self.getPos(), self.getColor(), self.getSize(), self.getHardness())
@@ -142,5 +142,5 @@ if __name__ == '__main__':
     c = DrawingPoint.fromColors((1,1), (0, 0, 255, 0), 10, .75)
     d = DrawingPoint.fromColors((1,0), (0, 0, 0, 255), 10, .75)
     e = Bezier([a,b,c,d])
-    for i in range(10):
+    for i in range(11):
         print(e.sample(i/10))
