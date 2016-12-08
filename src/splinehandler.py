@@ -128,6 +128,10 @@ class Path():
     def sample(self, t):
         pass
 
+    def toArr(self, n):
+        a = np.arange(n) / (n-1)
+        return [self.sample(t) for t in a]
+
 class Bezier(Path):
     def __init__(self, points):
         self._points = points
@@ -172,7 +176,6 @@ class CompoundBezier(Path):
         #determine which bezier to sample:
         bezier_t = len(self._beziers)*t
         bezier_index = min(int(bezier_t), len(self._beziers)-1)
-        print(bezier_t, bezier_index)
         bezier_t = 1 if t>=1 else bezier_t%1 # Stop t=1 from making bezier_t = 0
         return self._beziers[bezier_index].sample(bezier_t)
 
@@ -187,5 +190,4 @@ if __name__ == '__main__':
     g.appendPoint(a, b)
     g.appendPoint(c, d)
     g.appendPoint(e, f)
-    for i in range(11):
-        print(g.sample(i/10))
+    [print(pt) for pt in g.toArr(11)]
