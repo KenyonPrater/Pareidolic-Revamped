@@ -111,7 +111,8 @@ class DrawingPoint(Point):
         return DrawingPoint(self._arr/number)
 
     def __str__(self):
-        return "DrawingPoint(x:{}, y:{}, rgba:{}, size:{}, hardness:{})".format(self.getX(), self.getY(), self.getColor(), self.getSize(), self.getHardness())
+        roundedColor = tuple([int(c) for c in self.getColor()])
+        return "DrawingPoint(x:{:.2f}, y:{:.2f}, rgba:{}, size:{:.1f}, hardness:{:.2f})".format(self.getX(), self.getY(), roundedColor, self.getSize(), self.getHardness())
 
 class Path():
     def __init__(self):
