@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class Point():
     def __init__(self, array):
@@ -15,6 +16,9 @@ class Point():
 
     def __sub__(self, other):
         return Point(self._arr - other._arrapplyBrush)
+
+    def __mul__(self, number):
+        return Point(self._arr*number)
 
     def __mul__(self, number):
         return Point(self._arr*number)
@@ -102,9 +106,12 @@ class DrawingPoint(Point):
         return DrawingPoint(self._arr + other._arr)
 
     def __sub__(self, other):
-        return DrawingPoint(self._arr - other._arrapplyBrush)
+        return DrawingPoint(self._arr - other._arr)
 
     def __mul__(self, number):
+        return DrawingPoint(self._arr*number)
+
+    def __rmul__(self, number):
         return DrawingPoint(self._arr*number)
 
     def __truediv__(self, number):
@@ -134,14 +141,51 @@ class Bezier(Path):
             a = new_a
         return a[0]
 
+class CompoundBezier(Path):
+    def __init__(self):
+        self._points = []
+        self._beziers = []
 
+    def appendPoint(self, center, r_tangent, l_tangent=None):
+        if l_tangent == None:
+            l_tangent = 2*center - r_tangent
+        self._points += [[l_tangent, center, r_tangent]]
+        self.generateBeziers()
 
+    def insertPoint(self, index, center, r_tangent, l_tangent=None):
+        if l_tangent == None:
+            l_tangent = 2*center - r_tangent
+        self._points.insert(index, [l_tangent, center, r_tangent])
+        self.generateBeziers()
+
+    def removePoint(self, index):
+        self._points.pop(index)
+        self.generateBeziers()
+
+    def generateBeziers(self):
+        self._beziers = []
+        for i in range(len(self._points) - 1):
+            arr = [self._points[i][1], self._points[i][2], self._points[i+1][0], self._points[i+1][1]]
+            self._beziers += [Bezier(arr)]
+
+    def sample(self, t):
+        #determine which bezier to sample:
+        bezier_t = len(self._beziers)*t
+        bezier_index = min(int(bezier_t), len(self._beziers)-1)
+        print(bezier_t, bezier_index)
+        bezier_t = 1 if t>=1 else bezier_t%1 # Stop t=1 from making bezier_t = 0
+        return self._beziers[bezier_index].sample(bezier_t)
 
 if __name__ == '__main__':
     a = DrawingPoint.fromColors((0,0), (255, 0, 0, 0), 10, .75)
     b = DrawingPoint.fromColors((0,1), (0, 255, 0, 0), 10, .75)
-    c = DrawingPoint.fromColors((1,1), (0, 0, 255, 0), 10, .75)
-    d = DrawingPoint.fromColors((1,0), (0, 0, 0, 255), 10, .75)
-    e = Bezier([a,b,c,d])
+    c = DrawingPoint.fromColors((.5,.5), (0, 0, 255, 0), 10, .75)
+    d = DrawingPoint.fromColors((.5,0), (0, 0, 0, 255), 10, .75)
+    e = DrawingPoint.fromColors((1,1), (0, 0, 255, 0), 10, .75)
+    f = DrawingPoint.fromColors((1,2), (0, 0, 0, 255), 10, .75)
+    g = CompoundBezier()
+    g.appendPoint(a, b)
+    g.appendPoint(c, d)
+    g.appendPoint(e, f)
     for i in range(11):
-        print(e.sample(i/10))
+        print(g.sample(i/10))
